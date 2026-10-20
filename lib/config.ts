@@ -19,6 +19,7 @@ export const site = {
 
   services: [
     { day: "Todo domingo", time: "19h", label: "Culto da Família" },
+    { day: "Toda quinta-feira", time: "20h", label: "Culto de Oração" },
     { day: "1º domingo do mês", time: "9h", label: "Estudo bíblico" },
     { day: "Último sábado do mês", time: "19h", label: "Culto de jovens" },
   ],
@@ -45,7 +46,7 @@ export const site = {
     },
     {
       q: "Quais são os dias e horários dos cultos?",
-      a: "O culto acontece todo domingo às 19h. No primeiro domingo de cada mês temos estudo bíblico às 9h, e no último sábado do mês, culto de jovens às 19h. Você é muito bem-vindo!",
+      a: "O culto acontece todo domingo às 19h, e toda quinta-feira às 20h temos o Culto de Oração. No primeiro domingo de cada mês temos estudo bíblico às 9h, e no último sábado do mês, culto de jovens às 19h. Você é muito bem-vindo!",
     },
     {
       q: "O que é este acervo?",
