@@ -12,7 +12,7 @@ const NAV = [
   { href: "/estudos", label: "Estudos" },
 ];
 
-export function Header() {
+export function Header({ isOwner }: { isOwner: boolean }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -61,9 +61,11 @@ export function Header() {
                 {n.label}
               </Link>
             ))}
-            <Link href="/painel" className="btn-outline !px-4 !py-2">
-              Painel
-            </Link>
+            {isOwner && (
+              <Link href="/painel" className="btn-outline !px-4 !py-2">
+                Painel
+              </Link>
+            )}
           </nav>
 
           <button
@@ -111,9 +113,11 @@ export function Header() {
               {n.label}
             </Link>
           ))}
-          <Link href="/painel" className="btn-light mt-10 self-start">
-            Abrir painel
-          </Link>
+          {isOwner && (
+            <Link href="/painel" className="btn-light mt-10 self-start">
+              Abrir painel
+            </Link>
+          )}
         </nav>
       </div>
     </>

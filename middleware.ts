@@ -1,13 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { PAINEL_COOKIE, painelSenha, painelToken } from "@/lib/painel-auth";
+import { hasEditAccess, PAINEL_COOKIE } from "@/lib/painel-auth";
 
-/** Protege o painel e as APIs com senha — somente se PAINEL_SENHA estiver definida. */
+/** Painel e APIs: somente o dono do site (senha). Visitantes só leem as páginas publicadas. */
 export async function middleware(request: NextRequest) {
-  const senha = painelSenha();
-  if (!senha) return NextResponse.next();
-
-  const cookie = request.cookies.get(PAINEL_COOKIE)?.value;
-  if (cookie && cookie === (await painelToken(senha))) return NextResponse.next();
+  if (await hasEditAccess(request.cookies.get(PAINEL_COOKIE)?.value)) return NextResponse.next();
 
   if (request.nextUrl.pathname.startsWith("/api")) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });

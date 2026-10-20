@@ -7,6 +7,7 @@ import { Photo } from "@/components/Photo";
 import { Reveal } from "@/components/Reveal";
 import { SectionTitle } from "@/components/SectionTitle";
 import { site } from "@/lib/config";
+import { isOwner } from "@/lib/owner";
 import { getLatest, getMostRecent, getStats } from "@/lib/messages";
 import { CATEGORY_LABEL, type MessageCard as Card } from "@/lib/types";
 import { formatDate, paragraphs } from "@/lib/utils";
@@ -14,11 +15,12 @@ import { formatDate, paragraphs } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [stats, recent, pregacoes, estudos] = await Promise.all([
+  const [stats, recent, pregacoes, estudos, owner] = await Promise.all([
     getStats(),
     getMostRecent(),
     getLatest("pregacao"),
     getLatest("estudo"),
+    isOwner(),
   ]);
 
   return (
@@ -87,7 +89,7 @@ export default async function HomePage() {
               </Link>
             </Reveal>
           ) : (
-            <EmptyState />
+            <EmptyState owner={owner} />
           )}
         </div>
       </section>
@@ -177,13 +179,15 @@ function Latest({
   );
 }
 
-function EmptyState() {
+function EmptyState({ owner }: { owner: boolean }) {
   return (
     <div className="glass mx-auto mt-14 max-w-xl p-10 text-center">
-      <p className="text-stone">Ainda não há mensagens publicadas.</p>
-      <Link href="/painel/nova" className="btn-light mt-6">
-        Enviar a primeira
-      </Link>
+      <p className="text-stone">Em breve, as primeiras mensagens estarão aqui.</p>
+      {owner && (
+        <Link href="/painel/nova" className="btn-light mt-6">
+          Enviar a primeira
+        </Link>
+      )}
     </div>
   );
 }

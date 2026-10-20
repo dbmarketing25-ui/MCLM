@@ -5,6 +5,7 @@ import { Photo } from "@/components/Photo";
 import { QuotesCarousel } from "@/components/QuotesCarousel";
 import { Reveal } from "@/components/Reveal";
 import { site } from "@/lib/config";
+import { isOwner } from "@/lib/owner";
 import { getBySlug, getNeighbors } from "@/lib/messages";
 import { CATEGORY_LABEL } from "@/lib/types";
 import { formatDate, paragraphs, wordCount } from "@/lib/utils";
@@ -23,7 +24,7 @@ export default async function MessagePage({ params }: Props) {
   const m = await getBySlug(slug);
   if (!m) notFound();
 
-  const { older, newer } = await getNeighbors(m);
+  const [{ older, newer }, owner] = await Promise.all([getNeighbors(m), isOwner()]);
   const cat = CATEGORY_LABEL[m.category];
   const minutes = Math.max(1, Math.round(wordCount(m.transcript) / 230));
   const image = m.category === "pregacao" ? site.images.pregacoes : site.images.estudos;
@@ -53,9 +54,11 @@ export default async function MessagePage({ params }: Props) {
             <Meta label="Pregador" value={m.preacher} />
             <Meta label="Data" value={formatDate(m.date)} />
             {m.transcript && <Meta label="Leitura" value={`${minutes} min de transcrição`} />}
-            <Link href={`/painel/${m.id}`} className="btn-outline !py-2 sm:ml-auto">
-              Editar
-            </Link>
+            {owner && (
+              <Link href={`/painel/${m.id}`} className="btn-outline !py-2 sm:ml-auto">
+                Editar
+              </Link>
+            )}
           </div>
         </header>
       </Photo>

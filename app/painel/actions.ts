@@ -7,6 +7,9 @@ import { canonicalBook } from "@/lib/bible";
 import { fillExactVerses } from "@/lib/ai";
 import { parseAiText } from "@/lib/prompt";
 import { uniqueSlug } from "@/lib/utils";
+import { isOwner } from "@/lib/owner";
+
+const NAO_AUTORIZADO = "Você não tem permissão para editar. Entre no painel com a senha.";
 import type { Category, KeyPoint, Status, Verse } from "@/lib/types";
 
 export type SavePayload = {
@@ -26,6 +29,7 @@ export type SavePayload = {
 };
 
 export async function saveMessage(p: SavePayload): Promise<{ error?: string; slug?: string }> {
+  if (!(await isOwner())) return { error: NAO_AUTORIZADO };
   const supabase = db();
 
   if (!p.title.trim()) return { error: "O título é obrigatório." };
@@ -77,6 +81,7 @@ export async function createFromManual(input: {
   series: string;
   aiText: string;
 }): Promise<{ error?: string; id?: string }> {
+  if (!(await isOwner())) return { error: NAO_AUTORIZADO };
   let result;
   try {
     result = parseAiText(input.aiText);
@@ -115,6 +120,7 @@ export async function createFromManual(input: {
 }
 
 export async function deleteMessage(formData: FormData) {
+  if (!(await isOwner())) redirect("/entrar");
   const supabase = db();
   const id = String(formData.get("id") ?? "");
   if (id) await supabase.from("messages").delete().eq("id", id);

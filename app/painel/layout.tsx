@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { painelSenha } from "@/lib/painel-auth";
+import { sair } from "@/app/entrar/actions";
 
 export const metadata: Metadata = { title: "Painel" };
 export const dynamic = "force-dynamic";
@@ -26,6 +28,13 @@ export default function PainelLayout({ children }: { children: React.ReactNode }
             <Link href="/painel/nova" className="btn-light !px-4 !py-2">
               + Nova
             </Link>
+            {painelSenha() && (
+              <form action={sair}>
+                <button type="submit" className="btn-ghost">
+                  Sair
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </header>

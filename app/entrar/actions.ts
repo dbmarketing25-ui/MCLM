@@ -8,7 +8,7 @@ export async function entrar(_: { error?: string }, formData: FormData): Promise
   const senha = painelSenha();
   const volta = String(formData.get("volta") ?? "/painel");
   const destino = volta.startsWith("/painel") ? volta : "/painel";
-  if (!senha) redirect(destino);
+  if (!senha) return { error: "O painel ainda não tem senha configurada." };
 
   if (String(formData.get("senha") ?? "") !== senha) return { error: "Senha incorreta." };
 
@@ -20,4 +20,9 @@ export async function entrar(_: { error?: string }, formData: FormData): Promise
     maxAge: 60 * 60 * 24 * 60, // 60 dias
   });
   redirect(destino);
+}
+
+export async function sair() {
+  (await cookies()).delete(PAINEL_COOKIE);
+  redirect("/");
 }
