@@ -2,12 +2,22 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { buildManualPrompt } from "@/lib/prompt";
 import type { Category } from "@/lib/types";
 import { cn, todayISO, wordCount } from "@/lib/utils";
+import { createFromManual } from "../actions";
 
-type Phase = "form" | "running" | "error";
+type Phase = "form" | "running" | "error" | "manual";
 
-export function NewMessageForm({ preachers, series }: { preachers: string[]; series: string[] }) {
+export function NewMessageForm({
+  preachers,
+  series,
+  auto,
+}: {
+  preachers: string[];
+  series: string[];
+  auto: boolean;
+}) {
   const router = useRouter();
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -27,7 +37,53 @@ export function NewMessageForm({ preachers, series }: { preachers: string[]; ser
   const [error, setError] = useState("");
   const [elapsed, setElapsed] = useState(0);
 
+  const [aiText, setAiText] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [saving, setSaving] = useState(false);
+
   const words = wordCount(transcript);
+
+  async function copyPrompt() {
+    const prompt = buildManualPrompt({ transcript, category, preacher, series: serie });
+    try {
+      await navigator.clipboard.writeText(prompt);
+    } catch {
+      // Navegadores sem permissão de área de transferência: seleciona um campo temporário
+      const ta = document.createElement("textarea");
+      ta.value = prompt;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 4000);
+  }
+
+  async function saveManual() {
+    setError("");
+    setSaving(true);
+    const res = await createFromManual({ transcript, category, date, preacher, series: serie, aiText });
+    if (res.error || !res.id) {
+      setError(res.error ?? "Erro ao salvar.");
+      setSaving(false);
+      return;
+    }
+    router.push(`/painel/${res.id}`);
+  }
+
+  function start() {
+    setError("");
+    if (words < 40) {
+      setError("A transcrição está muito curta.");
+      return;
+    }
+    if (auto) generate();
+    else {
+      setPhase("manual");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
 
   async function handleFile(file: File) {
     setError("");
@@ -107,6 +163,68 @@ export function NewMessageForm({ preachers, series }: { preachers: string[]; ser
     } finally {
       clearInterval(timer);
     }
+  }
+
+  if (phase === "manual") {
+    return (
+      <div className="mt-10 space-y-6">
+        <section className="glass p-6 sm:p-8">
+          <p className="eyebrow">Passo 1</p>
+          <h2 className="mt-3 text-2xl font-light">
+            Copie o pedido e cole no <span className="em">Claude</span>
+          </h2>
+          <p className="mt-3 max-w-xl text-[14px] leading-relaxed text-stone">
+            O pedido já inclui as instruções e a transcrição inteira. Abra o claude.ai (pode ser a conta grátis),
+            cole numa conversa nova e envie.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button type="button" onClick={copyPrompt} className="btn-light">
+              {copied ? "✓ Copiado" : "Copiar pedido"}
+            </button>
+            <a href="https://claude.ai/new" target="_blank" rel="noreferrer" className="btn-outline">
+              Abrir claude.ai ↗
+            </a>
+          </div>
+        </section>
+
+        <section className="glass p-6 sm:p-8">
+          <p className="eyebrow">Passo 2</p>
+          <h2 className="mt-3 text-2xl font-light">
+            Cole aqui a <span className="em">resposta</span>
+          </h2>
+          <p className="mt-3 max-w-xl text-[14px] leading-relaxed text-stone">
+            Quando o Claude terminar, clique em copiar na resposta dele e cole abaixo.
+          </p>
+          <textarea
+            value={aiText}
+            onChange={(e) => setAiText(e.target.value)}
+            rows={12}
+            placeholder='{ "title": "...", ... }'
+            className="field mt-6 resize-y font-mono text-[13px]"
+          />
+        </section>
+
+        {error && (
+          <p role="alert" className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-[14px] text-red-200">
+            {error}
+          </p>
+        )}
+
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+          <button type="button" onClick={() => setPhase("form")} className="btn-ghost sm:mr-auto">
+            ← Voltar
+          </button>
+          <button
+            type="button"
+            onClick={saveManual}
+            disabled={saving || aiText.trim().length < 20}
+            className="btn-light !px-8 !py-3.5"
+          >
+            {saving ? "Criando…" : "Criar rascunho"}
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (phase === "running") {
@@ -285,8 +403,8 @@ export function NewMessageForm({ preachers, series }: { preachers: string[]; ser
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
         <p className="text-[12px] text-stone sm:mr-auto">O resultado fica como rascunho até você publicar.</p>
-        <button type="button" onClick={generate} disabled={extracting || words < 40} className="btn-light !px-8 !py-3.5">
-          Gerar resumo
+        <button type="button" onClick={start} disabled={extracting || words < 40} className="btn-light !px-8 !py-3.5">
+          {auto ? "Gerar resumo" : "Continuar"}
         </button>
       </div>
     </div>

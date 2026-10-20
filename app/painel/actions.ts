@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/supabase/server";
 import { canonicalBook } from "@/lib/bible";
+import { fillExactVerses } from "@/lib/ai";
+import { parseAiText } from "@/lib/prompt";
+import { uniqueSlug } from "@/lib/utils";
 import type { Category, KeyPoint, Status, Verse } from "@/lib/types";
 
 export type SavePayload = {
@@ -63,6 +66,52 @@ export async function saveMessage(p: SavePayload): Promise<{ error?: string; slu
 
   revalidatePath("/", "layout");
   return { slug: data.slug };
+}
+
+/** Modo grátis: recebe a resposta copiada do claude.ai e cria o rascunho. */
+export async function createFromManual(input: {
+  transcript: string;
+  category: Category;
+  date: string;
+  preacher: string;
+  series: string;
+  aiText: string;
+}): Promise<{ error?: string; id?: string }> {
+  let result;
+  try {
+    result = parseAiText(input.aiText);
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Resposta inválida." };
+  }
+  if (!result.title && !result.summary.length) {
+    return { error: "A resposta não tem título nem resumo. Confira se copiou a resposta inteira." };
+  }
+  await fillExactVerses(result);
+
+  const { data, error } = await db()
+    .from("messages")
+    .insert({
+      slug: uniqueSlug(result.title || "mensagem"),
+      status: "draft",
+      category: input.category === "estudo" ? "estudo" : "pregacao",
+      date: input.date || new Date().toISOString().slice(0, 10),
+      preacher: input.preacher.trim(),
+      series: input.series.trim() || null,
+      transcript: input.transcript.trim(),
+      title: result.title,
+      main_topic: result.main_topic,
+      summary: result.summary.join("\n\n"),
+      verses: result.verses,
+      key_points: result.key_points,
+      quotes: result.quotes,
+      books: [...new Set(result.verses.map((v) => v.book).filter(Boolean))],
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) return { error: "Não foi possível salvar: " + (error?.message ?? "") };
+  revalidatePath("/painel");
+  return { id: data.id };
 }
 
 export async function deleteMessage(formData: FormData) {

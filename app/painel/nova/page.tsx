@@ -1,3 +1,4 @@
+import { aiEnabled } from "@/lib/ai";
 import { db } from "@/lib/supabase/server";
 import { NewMessageForm } from "./NewMessageForm";
 
@@ -7,6 +8,7 @@ export default async function NovaPage() {
   const rows = (data ?? []) as { preacher: string; series: string | null }[];
   const preachers = [...new Set(rows.map((r) => r.preacher).filter(Boolean))].sort();
   const series = [...new Set(rows.map((r) => r.series ?? "").filter(Boolean))].sort();
+  const auto = aiEnabled();
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -15,10 +17,13 @@ export default async function NovaPage() {
         Enviar <span className="em">transcrição</span>
       </h1>
       <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-stone">
-        Cole o texto ou envie um arquivo .txt, .docx ou .pdf. A IA gera título, tópico, resumo, versículos, pontos e
-        frases marcantes — tudo fica como rascunho para você revisar antes de publicar.
+        Cole o texto ou envie um arquivo .txt, .docx ou .pdf.{" "}
+        {auto
+          ? "A IA gera título, tópico, resumo, versículos, pontos e frases marcantes"
+          : "O painel monta o pedido para você colar no Claude (claude.ai, grátis) e depois colar a resposta aqui"}{" "}
+        — tudo fica como rascunho para você revisar antes de publicar.
       </p>
-      <NewMessageForm preachers={preachers} series={series} />
+      <NewMessageForm preachers={preachers} series={series} auto={auto} />
     </div>
   );
 }

@@ -24,7 +24,8 @@ Edite o `.env.local` (modelo em `.env.example`):
 | --- | --- |
 | `SUPABASE_URL` | Project URL do passo 2.3 |
 | `SUPABASE_SERVICE_ROLE_KEY` | Chave service_role — usada **só no servidor** |
-| `ANTHROPIC_API_KEY` | Chave da API do Claude — usada **só no servidor** |
+| `PAINEL_SENHA` | *(opcional)* senha para entrar no `/painel`. Vazio = painel aberto |
+| `ANTHROPIC_API_KEY` | *(opcional)* chave da API do Claude. Vazio = **modo grátis** (copiar/colar no claude.ai) |
 | `AI_MODEL` | Modelo (padrão `claude-opus-5-5`) |
 | `BIBLE_TEXT_SOURCE` | `ai` (a IA escreve o versículo na ARA) ou `bible-api` (texto exato da Almeida de domínio público, grafia antiga) |
 
@@ -44,14 +45,15 @@ Acesse http://localhost:3000.
 3. Cadastre as mesmas variáveis de ambiente do `.env.local`.
 4. Deploy. O limite de 300 s por requisição (`maxDuration`) já está configurado para transcrições longas.
 
-> **Atenção:** sem login, qualquer pessoa que tiver o endereço do site consegue abrir o `/painel`,
-> gerar resumos (gastando créditos da API) e editar ou excluir mensagens. Divulgue o endereço com cuidado.
+> **Atenção:** sem `PAINEL_SENHA`, qualquer pessoa que tiver o endereço do site consegue abrir o `/painel`
+> e editar ou excluir mensagens. Defina uma senha antes de divulgar o site.
 
 ## Como usar
 
 1. **Painel → + Nova**: cole o texto ou envie `.txt`, `.docx` ou `.pdf`; escolha categoria, data, pregador e série.
-2. **Gerar resumo**: a barra mostra o progresso. Pode fechar a aba — o processamento continua no servidor e
-   o rascunho aparece na lista quando terminar.
+2. **Modo grátis** (sem `ANTHROPIC_API_KEY`): clique em **Continuar → Copiar pedido**, cole no claude.ai,
+   copie a resposta e cole de volta no painel → **Criar rascunho**.
+   **Modo automático** (com chave): **Gerar resumo** — a barra mostra o progresso e o rascunho é salvo sozinho.
 3. **Revisar**: edite qualquer campo (reordene/adicione/remova versículos, pontos e frases) e clique em **Publicar**.
 
 Só itens **publicados** aparecem nas páginas de leitura.
