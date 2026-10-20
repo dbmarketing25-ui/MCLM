@@ -39,6 +39,41 @@ export const site = {
     faq: "/images/faq.jpg",
   },
 
+  /**
+   * Vídeos do Instagram exibidos na Home (tocam um de cada vez, automaticamente).
+   * Os arquivos ficam em /public/videos (reel-N.mp4 e a capa reel-N.jpg).
+   */
+  reels: [
+    {
+      src: "/videos/reel-1.mp4",
+      poster: "/videos/reel-1.jpg",
+      url: "https://www.instagram.com/reel/CokpowsAtJ9/",
+      title: "Tem culto hoje!",
+      text: "O convite de sempre: venha cultuar com a gente.",
+    },
+    {
+      src: "/videos/reel-2.mp4",
+      poster: "/videos/reel-2.jpg",
+      url: "https://www.instagram.com/reel/CwoEvEgIO3p/",
+      title: "Isaías 38:20",
+      text: "O Senhor veio salvar-me; nós o louvaremos todos os dias de nossa vida na Casa do Senhor.",
+    },
+    {
+      src: "/videos/reel-3.mp4",
+      poster: "/videos/reel-3.jpg",
+      url: "https://www.instagram.com/reel/C1TGVktNo5S/",
+      title: "O que realmente importa?",
+      text: "Jesus nos deixou uma missão: honrar a sua palavra e o seu verdadeiro evangelho.",
+    },
+    {
+      src: "/videos/reel-4.mp4",
+      poster: "/videos/reel-4.jpg",
+      url: "https://www.instagram.com/reel/DT8XV8Tjsm-/",
+      title: "O teu grande amor",
+      text: "É o que precisamos para viver. Que Deus abençoe a todos!",
+    },
+  ],
+
   faq: [
     {
       q: "Onde fica a igreja?",

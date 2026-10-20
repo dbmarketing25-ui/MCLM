@@ -4,6 +4,7 @@ import { Gallery, GalleryItem } from "@/components/Gallery";
 import { Logo } from "@/components/Logo";
 import { MessageCard } from "@/components/MessageCard";
 import { Photo } from "@/components/Photo";
+import { Reels } from "@/components/Reels";
 import { Reveal } from "@/components/Reveal";
 import { SectionTitle } from "@/components/SectionTitle";
 import { site } from "@/lib/config";
@@ -94,13 +95,32 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* VÍDEOS DO INSTAGRAM */}
+      <section className="border-t border-white/[0.05] bg-ink-850 py-24 sm:py-32">
+        <div className="container-x">
+          <Reveal className="mb-12 flex flex-col gap-6 sm:mb-16 sm:flex-row sm:items-end sm:justify-between">
+            <SectionTitle eyebrow="Instagram · @eumissao" lead="Momentos da" emphasis="nossa igreja" />
+            <a
+              href={site.social[0].url}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-outline self-start sm:self-auto"
+            >
+              Seguir no Instagram
+            </a>
+          </Reveal>
+          <Reveal delay={80}>
+            <Reels reels={site.reels} />
+          </Reveal>
+        </div>
+      </section>
+
       <Latest
         title="Últimas"
         emphasis="pregações"
         eyebrow="Cultos de domingo"
         href="/pregacoes"
         items={pregacoes}
-        className="bg-ink-850"
       />
       <Latest
         title="Últimos"
@@ -108,10 +128,11 @@ export default async function HomePage() {
         eyebrow="Estudo bíblico · 1º domingo do mês"
         href="/estudos"
         items={estudos}
+        className="bg-ink-850"
       />
 
       {/* FAQ */}
-      <section className="border-t border-white/[0.05] bg-ink-850 py-24 sm:py-36">
+      <section className="border-t border-white/[0.05] py-24 sm:py-36">
         <div className="container-x grid gap-14 md:grid-cols-2 md:gap-20">
           <Reveal>
             <SectionTitle eyebrow="Perguntas frequentes" lead="Tudo o que você" emphasis="precisa saber" />
