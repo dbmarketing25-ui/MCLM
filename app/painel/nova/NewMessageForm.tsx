@@ -331,7 +331,7 @@ export function NewMessageForm({
             {(
               [
                 ["pregacao", "Pregação", "Culto de domingo"],
-                ["estudo", "Estudo", "Estudo bíblico na semana"],
+                ["estudo", "Estudo", "Estudo bíblico (1º domingo)"],
               ] as const
             ).map(([value, label, hint]) => (
               <button

@@ -18,8 +18,9 @@ export const site = {
   },
 
   services: [
-    { day: "Domingo", time: "19h", label: "Culto da Família" },
-    { day: "Quinta-feira", time: "20h", label: "Culto de Oração" },
+    { day: "Todo domingo", time: "19h", label: "Culto da Família" },
+    { day: "1º domingo do mês", time: "9h", label: "Estudo bíblico" },
+    { day: "Último sábado do mês", time: "19h", label: "Culto de jovens" },
   ],
 
   social: [{ label: "Instagram", url: "https://www.instagram.com/eumissao/" }],
@@ -44,7 +45,7 @@ export const site = {
     },
     {
       q: "Quais são os dias e horários dos cultos?",
-      a: "Domingo às 19h, no Culto da Família, e quinta-feira às 20h, no Culto de Oração. Você é muito bem-vindo!",
+      a: "O culto acontece todo domingo às 19h. No primeiro domingo de cada mês temos estudo bíblico às 9h, e no último sábado do mês, culto de jovens às 19h. Você é muito bem-vindo!",
     },
     {
       q: "O que é este acervo?",
@@ -52,7 +53,7 @@ export const site = {
     },
     {
       q: "Qual a diferença entre Pregações e Estudos?",
-      a: "Pregações são as mensagens dos cultos de domingo. Estudos são os encontros bíblicos durante a semana, muitas vezes organizados em séries que percorrem um livro ou tema.",
+      a: "Pregações são as mensagens dos cultos de domingo. Estudos são os encontros bíblicos do primeiro domingo de cada mês, às 9h, muitas vezes organizados em séries que percorrem um livro ou tema.",
     },
     {
       q: "Como encontro uma mensagem específica?",

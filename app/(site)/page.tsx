@@ -105,7 +105,7 @@ export default async function HomePage() {
       <Latest
         title="Últimos"
         emphasis="estudos"
-        eyebrow="Estudos bíblicos na semana"
+        eyebrow="Estudo bíblico · 1º domingo do mês"
         href="/estudos"
         items={estudos}
       />

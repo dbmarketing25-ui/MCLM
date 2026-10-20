@@ -13,7 +13,7 @@ export default async function EstudosPage({
   return (
     <ListingPage
       category="estudo"
-      eyebrow="Estudos bíblicos durante a semana"
+      eyebrow="Estudo bíblico · todo 1º domingo do mês, às 9h"
       lead="Aprofundar-se na"
       emphasis="Palavra"
       description="Estudos versículo a versículo, organizados em séries, para quem deseja ir mais fundo nas Escrituras."
